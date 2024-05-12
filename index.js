@@ -35,6 +35,13 @@ async function run() {
       const result = await purchaseCollention.find(query).toArray();
       res.send(result);
     
+    });
+
+    // get all food items
+    app.get("/allFoodItems", async (req, res) => {
+      const cursor = allFoodItemsCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
     })
     
     
