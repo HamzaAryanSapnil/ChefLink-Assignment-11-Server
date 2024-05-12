@@ -26,6 +26,7 @@ async function run() {
     // Send a ping to confirm a successful connection
     const userCollention = client.db("ChefLink_DB").collection("users");
     const purchaseCollention = client.db("ChefLink_DB").collection("Purchased_Foods");
+    const allFoodItemsCollection = client.db("ChefLink_DB").collection("All_Food_Items");
     
     
     await client.db("admin").command({ ping: 1 });
