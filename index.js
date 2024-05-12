@@ -54,6 +54,12 @@ async function run() {
       res.send(result);
     })
     
+    // post foods in all food items collection
+    app.post("/allFoodItems", async (req, res) => {
+      const food = req.body;
+      const result = await allFoodItemsCollection.insertOne(food);
+      res.send(result);
+    })
     
     await client.db("admin").command({ ping: 1 });
     console.log(
