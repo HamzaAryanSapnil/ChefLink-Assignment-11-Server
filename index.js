@@ -49,6 +49,10 @@ async function run() {
     app.get("/allFoodItems/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
+      const options = {
+        // Include only the `title` and `imdb` fields in the returned document
+        projection: { _id: 0, title: 1, imdb: 1 },
+      };
       const result = await allFoodItemsCollection.findOne(query);
       res.send(result);
     })
