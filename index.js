@@ -46,6 +46,13 @@ async function run() {
     
     // get all food images from all food items collection
     
+
+    // post users
+    app.post("/users", async (req, res) => {
+      const user = req.body;
+      const result = await userCollention.insertOne(user);
+      res.send(result);
+    })
     
     
     await client.db("admin").command({ ping: 1 });
