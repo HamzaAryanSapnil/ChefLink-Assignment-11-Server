@@ -44,6 +44,9 @@ async function run() {
       res.send(result);
     })
     
+    // get all food images from all food items collection
+    
+    
     
     await client.db("admin").command({ ping: 1 });
     console.log(
