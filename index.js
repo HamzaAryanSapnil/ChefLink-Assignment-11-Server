@@ -29,9 +29,11 @@ async function run() {
     const allFoodItemsCollection = client.db("ChefLink_DB").collection("All_Food_Items");
 
     // get all purchased food
-    app.get("/purchasedFood/:email", async (req, res) => {
-      const email = req.params.email;
-      const query = { email: email };
+    app.get("/purchasedFood", async (req, res) => {
+      const query = {  };
+      if (req.query?.email) {
+        query = {email: req.query?.email}
+      }
       const result = await purchaseCollection.find(query).toArray();
       res.send(result);
     
