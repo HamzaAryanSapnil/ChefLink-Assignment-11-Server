@@ -88,8 +88,8 @@ async function run() {
     app.post("/purchasedFood", async (req, res) => {
       const food = req.body;
       console.log(food);
-      // const result = await purchaseCollection.insertOne(food);
-      // res.send(result);
+      const result = await purchaseCollection.insertOne(food);
+      res.send(result);
     })
 
     // update food in all food items collection
