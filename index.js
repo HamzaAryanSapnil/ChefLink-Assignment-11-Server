@@ -58,12 +58,15 @@ async function run() {
     })
 
     // get all food added by user, filter it with email
-    app.get("/allFoodItems/:email", async (req, res) => {
-      const email = req.params.email;
-      const query = { email: email };
-      const result = await allFoodItemsCollection.find(query).toArray();
-      res.send(result);
-    })
+    // app.get("/allFoodItems", async (req, res) => {
+      
+    //   const query = {};
+    //   if (req.query?.email) {
+    //     query = {email: req.query?.email}
+    //   }
+    //   const result = await allFoodItemsCollection.find(query).toArray();
+    //   res.send(result);
+    // })
 
     // get all food images from all food items collection
     
