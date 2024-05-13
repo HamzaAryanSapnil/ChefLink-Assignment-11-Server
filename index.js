@@ -25,14 +25,14 @@ async function run() {
   try {
     // Send a ping to confirm a successful connection
     const userCollention = client.db("ChefLink_DB").collection("users");
-    const purchaseCollention = client.db("ChefLink_DB").collection("Purchased_Foods");
+    const purchaseCollection = client.db("ChefLink_DB").collection("Purchased_Foods");
     const allFoodItemsCollection = client.db("ChefLink_DB").collection("All_Food_Items");
 
     // get all purchased food
     app.get("/purchasedFood/:email", async (req, res) => {
       const email = req.params.email;
       const query = { email: email };
-      const result = await purchaseCollention.find(query).toArray();
+      const result = await purchaseCollection.find(query).toArray();
       res.send(result);
     
     });
@@ -85,7 +85,7 @@ async function run() {
     // post purchased food
     app.post("/purchasedFood", async (req, res) => {
       const food = req.body;
-      const result = await purchaseCollention.insertOne(food);
+      const result = await purchaseCollection.insertOne(food);
       res.send(result);
     })
 
