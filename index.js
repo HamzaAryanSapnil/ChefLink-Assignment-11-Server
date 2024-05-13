@@ -39,7 +39,13 @@ async function run() {
 
     // get all food items
     app.get("/allFoodItems", async (req, res) => {
-      const cursor = allFoodItemsCollection.find();
+      console.log(req.query.email);
+      let query = {};
+      if (req.query?.email) { 
+        query = {email: req.query?.email}
+        
+      }
+      const cursor = allFoodItemsCollection.find(query);
       const result = await cursor.toArray();
       res.send(result);
     })
