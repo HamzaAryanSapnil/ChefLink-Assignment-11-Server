@@ -57,9 +57,9 @@ async function run() {
       const query = { _id: new ObjectId(id) };
       const options = {
         // Include only the `title` and `imdb` fields in the returned document
-        projection: {  foodName: 1, foodImageUrl: 1, foodCategory: 1, price: 1, userName: 1, description: 1, foodOrigin: 1, email: 1, quantity: 1 },
+        projection: {  foodName: 1, foodImageUrl: 1, foodCategory: 1, price: 1, userName: 1, description: 1, foodOrigin: 1,  quantity: 1, email: 1 },
       };
-      const result = await allFoodItemsCollection.findOne(query, options);
+      const result = await allFoodItemsCollection.findOne(query);
       res.send(result);
     })
 
