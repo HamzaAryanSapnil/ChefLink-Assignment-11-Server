@@ -63,16 +63,7 @@ async function run() {
       res.send(result);
     })
 
-    // get all food added by user, filter it with email
-    // app.get("/allFoodItems", async (req, res) => {
-      
-    //   const query = {};
-    //   if (req.query?.email) {
-    //     query = {email: req.query?.email}
-    //   }
-    //   const result = await allFoodItemsCollection.find(query).toArray();
-    //   res.send(result);
-    // })
+    
 
     // get all food images from all food items collection
     
@@ -88,6 +79,35 @@ async function run() {
     app.post("/allFoodItems", async (req, res) => {
       const food = req.body;
       const result = await allFoodItemsCollection.insertOne(food);
+      res.send(result);
+    })
+
+
+    // update food in all food items collection
+    app.put("/allFoodItems/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const updatedFood = req.body;
+      const food = {
+        $set: {
+          foodName: updatedFood.foodName,
+          foodImageUrl: updatedFood.foodImageUrl,
+          foodCategory: updatedFood.foodCategory,
+          price: updatedFood.price,
+          userName: updatedFood.userName,
+          description: updatedFood.description,
+          foodOrigin: updatedFood.foodOrigin,
+      }}
+      const result = await allFoodItemsCollection.updateOne(filter, food, options);
+      res.send(result);
+    })
+
+    // delete food from all food items collection
+    app.delete("/allFoodItems/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await allFoodItemsCollection.deleteOne(query);
       res.send(result);
     })
     
