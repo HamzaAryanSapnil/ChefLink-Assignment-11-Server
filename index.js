@@ -15,6 +15,12 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 
+
+// our own middleware
+const logger = async (req, res, next) => {
+  console.log("called:", req.host, req.originalUrl);
+  next();
+};
 // mongodb connection
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.q4gzfbc.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
@@ -38,8 +44,9 @@ async function run() {
       .db("ChefLink_DB")
       .collection("All_Food_Items");
 
-    // auth related api
-    app.post("/jwt", async (req, res) => {
+
+    //? auth related api
+    app.post("/jwt", logger, async (req, res) => {
       const user = req.body;
       console.log(user);
       const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
@@ -56,7 +63,7 @@ async function run() {
     // services related api
 
     // get all purchased food
-    app.get("/purchasedFood", async (req, res) => {
+    app.get("/purchasedFood", logger, async (req, res) => {
       console.log(req.query?.email);
       console.log("token", req.cookies.token);
       let query = {};
@@ -69,7 +76,7 @@ async function run() {
     });
 
     // get all food items
-    app.get("/allFoodItems", async (req, res) => {
+    app.get("/allFoodItems", logger, async (req, res) => {
       console.log(req.query.email);
       let query = {};
       if (req.query?.email) {
@@ -105,21 +112,21 @@ async function run() {
     // get all food images from all food items collection
 
     // post users
-    app.post("/users", async (req, res) => {
+    app.post("/users", logger, async (req, res) => {
       const user = req.body;
       const result = await userCollention.insertOne(user);
       res.send(result);
     });
 
     // post foods in all food items collection
-    app.post("/allFoodItems", async (req, res) => {
+    app.post("/allFoodItems", logger, async (req, res) => {
       const food = req.body;
       const result = await allFoodItemsCollection.insertOne(food);
       res.send(result);
     });
 
     // post purchased food
-    app.post("/purchasedFood", async (req, res) => {
+    app.post("/purchasedFood", logger, async (req, res) => {
       const food = req.body;
       console.log(food);
       const result = await purchaseCollection.insertOne(food);
