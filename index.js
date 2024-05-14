@@ -8,13 +8,14 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 // middleware
-app.use(cors({
-  origin: ["http://localhost:5173"],
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: ["http://localhost:5173"],
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(cookieParser());
-
 
 // our own middleware
 const logger = async (req, res, next) => {
@@ -24,20 +25,22 @@ const logger = async (req, res, next) => {
 
 const verifyToken = async (req, res, next) => {
   const token = req.cookies?.token;
-  console.log("value of token in middlewere", token);
   if (!token) {
-    return res.status(401).send({ success: false, message: "Invalid Credentials" });
+    return res
+      .status(401)
+      .send({ success: false, message: "Invalid Credentials" });
   }
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
     if (err) {
       console.log(err);
-      return res.status(401).send({ success: false, message: "Invalid Credentials" });
+      return res
+        .status(401)
+        .send({ success: false, message: "Invalid Credentials" });
     }
     // if token valid then.......
-    console.log("value in the token middleware", decoded);
     req.user = decoded;
     next();
-  })
+  });
 };
 // mongodb connection
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.q4gzfbc.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
@@ -62,7 +65,6 @@ async function run() {
       .db("ChefLink_DB")
       .collection("All_Food_Items");
 
-
     //? auth related api
     app.post("/jwt", logger, async (req, res) => {
       const user = req.body;
@@ -71,11 +73,11 @@ async function run() {
         expiresIn: "1h",
       });
       res
-      .cookie("token", token, {
-        httpOnly: true,
-        secure: false,
-      })
-      .send({success: true});
+        .cookie("token", token, {
+          httpOnly: true,
+          secure: false,
+        })
+        .send({ success: true });
     });
 
     // services related api
@@ -85,11 +87,14 @@ async function run() {
       console.log(req.query?.email);
       // console.log("token", req.cookies.token);
       console.log("user in the valid token", req.user);
+      if (req?.query?.email !== req?.user?.email) {
+        return res.status(403).send({ message: "Forbidden access" });
+      }
       let query = {};
       if (req.query?.email) {
         query = { email: req.query?.email };
       }
-      console.log(query);
+      console.log("email in req.query",query, "req.user.email", req.user.email);
       const result = await purchaseCollection.find(query).toArray();
       res.send(result);
     });
