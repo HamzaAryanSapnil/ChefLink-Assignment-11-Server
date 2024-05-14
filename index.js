@@ -46,7 +46,7 @@ async function run() {
         expiresIn: "1h",
       });
       res
-      .cookie("access-token", token, {
+      .cookie("token", token, {
         httpOnly: true,
         secure: false,
         sameSite: "none",
@@ -59,7 +59,7 @@ async function run() {
     // get all purchased food
     app.get("/purchasedFood", async (req, res) => {
       console.log(req.query?.email);
-      console.log("token", req.cookies.access-token);
+      console.log("token", req.cookies.token);
       let query = {};
       if (req.query?.email) {
         query = { email: req.query?.email };
