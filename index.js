@@ -19,12 +19,12 @@ app.use(cookieParser());
 
 // our own middleware
 const logger = async (req, res, next) => {
-  console.log("called:", req.host, req.originalUrl);
+  console.log("called: host, originalUrl, method, url", req.host, req.originalUrl, req.method, req.url);
   next();
 };
 
 const verifyToken = async (req, res, next) => {
-  const token = req.cookies?.token;
+  const token = req?.cookies?.token;
   if (!token) {
     return res
       .status(401)
@@ -75,32 +75,43 @@ async function run() {
       res
         .cookie("token", token, {
           httpOnly: true,
-          secure: false,
+          secure: true,
+          sameSite: "none",
         })
         .send({ success: true });
     });
 
+    app.post("/logOut", async (req, res) => {
+      const user = req.body;
+      console.log("logging out:  ", user);
+      res.clearCookie("token", { maxAge: 0 }).send({ success: true });
+    });
     // services related api
 
     // get all purchased food
     app.get("/purchasedFood", logger, verifyToken, async (req, res) => {
       console.log(req.query?.email);
       // console.log("token", req.cookies.token);
-      console.log("user in the valid token", req.user);
+      console.log("user in the valid token, token owner: ", req.user);
       if (req?.query?.email !== req?.user?.email) {
         return res.status(403).send({ message: "Forbidden access" });
       }
       let query = {};
-      if (req.query?.email) {
+      if (req?.query?.email) {
         query = { email: req.query?.email };
       }
-      console.log("email in req.query",query, "req.user.email", req.user.email);
+      console.log(
+        "email in req.query in purchased food",
+        query,
+        "req.user.email in purchased food",
+        req.user.email
+      );
       const result = await purchaseCollection.find(query).toArray();
       res.send(result);
     });
 
     // get all food items
-    app.get("/allFoodItems", logger, async (req, res) => {
+    app.get("/allFoodItems", logger, verifyToken, async (req, res) => {
       console.log(req.query.email);
       let query = {};
       if (req.query?.email) {
