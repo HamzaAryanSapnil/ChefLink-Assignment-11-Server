@@ -33,21 +33,17 @@ async function run() {
       .db("ChefLink_DB")
       .collection("All_Food_Items");
 
-      // auth related api
-      app.post("/jwt", async (req, res) => {
-        const user = req.body;
-        console.log(user);
-        res.send(user)
-      })
-      
-      
-      
-      
-      
-      
-      
-      // services related api
+    // auth related api
+    app.post("/jwt", async (req, res) => {
+      const user = req.body;
+      console.log(user);
+      const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
+        expiresIn: "1h",
+      });
+      res.send(token);
+    });
 
+    // services related api
 
     // get all purchased food
     app.get("/purchasedFood", async (req, res) => {
@@ -147,15 +143,15 @@ async function run() {
     // update food in purchased food collection
     app.patch("/purchasedFood/:id", async (req, res) => {
       const id = req.params.id;
-      const filter = { _id: new ObjectId(id) }; 
+      const filter = { _id: new ObjectId(id) };
       const updatedDoc = {
         $set: {
           status: req.body.status,
         },
-      }
+      };
       const result = await purchaseCollection.updateOne(filter, updatedDoc);
       res.send(result);
-    })
+    });
 
     // delete food from all food items collection
     app.delete("/allFoodItems/:id", async (req, res) => {
@@ -171,7 +167,7 @@ async function run() {
       const query = { _id: new ObjectId(id) };
       const result = await purchaseCollection.deleteOne(query);
       res.send(result);
-    })
+    });
 
     await client.db("admin").command({ ping: 1 });
     console.log(
