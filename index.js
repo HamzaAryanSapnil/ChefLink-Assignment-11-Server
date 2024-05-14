@@ -10,7 +10,7 @@ const port = process.env.PORT || 5000;
 // middleware
 app.use(
   cors({
-    origin: ["http://localhost:5173"],
+    origin: ["https://cheflink-d1e5b.web.app"],
     credentials: true,
   })
 );
