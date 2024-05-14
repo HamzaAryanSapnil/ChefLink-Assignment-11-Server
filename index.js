@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
+const jwt = require("jsonwebtoken");
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -31,6 +32,22 @@ async function run() {
     const allFoodItemsCollection = client
       .db("ChefLink_DB")
       .collection("All_Food_Items");
+
+      // auth related api
+      app.post("/jwt", async (req, res) => {
+        const user = req.body;
+        console.log(user);
+        res.send(user)
+      })
+      
+      
+      
+      
+      
+      
+      
+      // services related api
+
 
     // get all purchased food
     app.get("/purchasedFood", async (req, res) => {
