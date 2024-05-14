@@ -28,8 +28,16 @@ const verifyToken = async (req, res, next) => {
   if (!token) {
     return res.status(401).send({ success: false, message: "Invalid Credentials" });
   }
-
-  next();
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
+    if (err) {
+      console.log(err);
+      return res.status(401).send({ success: false, message: "Invalid Credentials" });
+    }
+    // if token valid then.......
+    console.log("value in the token middleware", decoded);
+    req.user = decoded;
+    next();
+  })
 };
 // mongodb connection
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.q4gzfbc.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
@@ -76,6 +84,7 @@ async function run() {
     app.get("/purchasedFood", logger, verifyToken, async (req, res) => {
       console.log(req.query?.email);
       // console.log("token", req.cookies.token);
+      console.log("user in the valid token", req.user);
       let query = {};
       if (req.query?.email) {
         query = { email: req.query?.email };
