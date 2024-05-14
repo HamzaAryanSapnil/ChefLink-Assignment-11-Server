@@ -1,6 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
+const cookieParser = require("cookie-parser");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const jwt = require("jsonwebtoken");
 const app = express();
@@ -12,6 +13,7 @@ app.use(cors({
   credentials: true,
 }));
 app.use(express.json());
+app.use(cookieParser());
 
 // mongodb connection
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.q4gzfbc.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
@@ -57,6 +59,7 @@ async function run() {
     // get all purchased food
     app.get("/purchasedFood", async (req, res) => {
       console.log(req.query?.email);
+      console.log("token", req.cookies.access-token);
       let query = {};
       if (req.query?.email) {
         query = { email: req.query?.email };
