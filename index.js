@@ -111,7 +111,7 @@ async function run() {
     });
 
     // get all food items
-    app.get("/allFoodItems", logger, verifyToken, async (req, res) => {
+    app.get("/allFoodItems", logger,  async (req, res) => {
       console.log(req.query.email);
       let query = {};
       if (req.query?.email) {
