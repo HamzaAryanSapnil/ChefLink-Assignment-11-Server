@@ -23,7 +23,7 @@ const logger = async (req, res, next) => {
 };
 
 const verifyToken = async (req, res, next) => {
-  const token = req.cookies.token;
+  const token = req.cookies?.token;
   if (!token) {
     return res.status(401).send({ success: false, message: "Invalid Credentials" });
   }
@@ -72,9 +72,9 @@ async function run() {
     // services related api
 
     // get all purchased food
-    app.get("/purchasedFood", logger, async (req, res) => {
+    app.get("/purchasedFood", logger, verifyToken, async (req, res) => {
       console.log(req.query?.email);
-      console.log("token", req.cookies.token);
+      // console.log("token", req.cookies.token);
       let query = {};
       if (req.query?.email) {
         query = { email: req.query?.email };
@@ -96,7 +96,7 @@ async function run() {
       res.send(result);
     });
 
-    // get single food by id
+    // get single food by id went to details
     app.get("/allFoodItems/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
