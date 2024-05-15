@@ -80,6 +80,7 @@ async function run() {
     const allFoodItemsCollection = client
       .db("ChefLink_DB")
       .collection("All_Food_Items");
+      const usersFeedbackCollection = client.db("ChefLink_DB").collection("usersFeedback");
 
     //? auth related api
     app.post("/jwt", logger, async (req, res) => {
@@ -172,6 +173,12 @@ async function run() {
       res.send(result);
     });
 
+    // add feedback to gallery
+    app.post("/addToGallery", logger, async (req, res) => {
+      const feedback = req.body;
+      const result = await usersFeedbackCollection.insertOne(feedback);
+      res.send(result);
+    })
     // post foods in all food items collection
     app.post("/allFoodItems", logger, async (req, res) => {
       const food = req.body;
