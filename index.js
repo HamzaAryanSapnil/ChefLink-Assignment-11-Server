@@ -13,7 +13,6 @@ app.use(
     origin: [
       "https://cheflink-d1e5b.web.app",
       "cheflink-d1e5b.firebaseapp.com",
-      "http://localhost:5173",
       "https://assignment-11-server-seven-pi.vercel.app"
     ],
     credentials: true,
