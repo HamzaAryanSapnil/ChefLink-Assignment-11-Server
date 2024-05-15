@@ -10,7 +10,11 @@ const port = process.env.PORT || 5000;
 // middleware
 app.use(
   cors({
-    origin: ["https://cheflink-d1e5b.web.app"],
+    origin: [
+      "https://cheflink-d1e5b.web.app", 
+      "cheflink-d1e5b.firebaseapp.com",
+      "http://localhost:5173"
+    ],
     credentials: true,
   })
 );
@@ -19,7 +23,13 @@ app.use(cookieParser());
 
 // our own middleware
 const logger = async (req, res, next) => {
-  console.log("called: host, originalUrl, method, url", req.host, req.originalUrl, req.method, req.url);
+  console.log(
+    "called: host, originalUrl, method, url",
+    req.host,
+    req.originalUrl,
+    req.method,
+    req.url
+  );
   next();
 };
 
@@ -111,7 +121,7 @@ async function run() {
     });
 
     // get all food items
-    app.get("/allFoodItems", logger,  async (req, res) => {
+    app.get("/allFoodItems", logger, async (req, res) => {
       console.log(req.query.email);
       let query = {};
       if (req.query?.email) {
@@ -222,7 +232,7 @@ async function run() {
       res.send(result);
     });
 
-    await client.db("admin").command({ ping: 1 });
+    // await client.db("admin").command({ ping: 1 });
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
     );
