@@ -80,7 +80,9 @@ async function run() {
     const allFoodItemsCollection = client
       .db("ChefLink_DB")
       .collection("All_Food_Items");
-      const usersFeedbackCollection = client.db("ChefLink_DB").collection("usersFeedback");
+    const usersFeedbackCollection = client
+      .db("ChefLink_DB")
+      .collection("usersFeedback");
 
     //? auth related api
     app.post("/jwt", logger, async (req, res) => {
@@ -95,7 +97,9 @@ async function run() {
     app.post("/logOut", async (req, res) => {
       const user = req.body;
       console.log("logging out:  ", user);
-      res.clearCookie("token", { ...cookieOptions,  maxAge: 0 }).send({ success: true });
+      res
+        .clearCookie("token", { ...cookieOptions, maxAge: 0 })
+        .send({ success: true });
     });
     // services related api
 
@@ -123,16 +127,16 @@ async function run() {
 
     // get all food items
     app.get("/allFoodItems", logger, async (req, res) => {
-      
       const page = parseInt(req.query.page);
       const size = parseInt(req.query.size);
       let query = {};
       if (req.query?.email) {
         query = { email: req.query?.email };
       }
-      const cursor = allFoodItemsCollection.find(query)
-      .skip(page*size)
-      .limit(size);
+      const cursor = allFoodItemsCollection
+        .find(query)
+        .skip(page * size)
+        .limit(size);
       const result = await cursor.toArray();
       res.send(result);
     });
@@ -141,7 +145,7 @@ async function run() {
     app.get("/allFoodItemsCount", async (req, res) => {
       const result = await allFoodItemsCollection.estimatedDocumentCount();
       res.send({ count: result });
-    })
+    });
     // get single food by id went to details
     app.get("/allFoodItems/:id", async (req, res) => {
       const id = req.params.id;
@@ -168,9 +172,12 @@ async function run() {
     app.get("/usersFeedback/:foodItemId", async (req, res) => {
       const foodItemId = req.params.foodItemId;
       const query = { foodItemId: foodItemId };
-      const result = await usersFeedbackCollection.find(query).sort({ createdAt: -1 }).toArray();
+      const result = await usersFeedbackCollection
+        .find(query)
+        .sort({ createdAt: -1 })
+        .toArray();
       res.send(result);
-    })
+    });
     // get all food images from all food items collection
 
     // post users
@@ -185,19 +192,24 @@ async function run() {
       const feedback = req.body;
       const result = await usersFeedbackCollection.insertOne(feedback);
       res.send(result);
-    })
+    });
     // post foods in all food items collection
     app.post("/allFoodItems", logger, async (req, res) => {
-      const food = req.body;
+      const food = {...req.body, purchaseCount: 0};
       const result = await allFoodItemsCollection.insertOne(food);
+
       res.send(result);
     });
 
     // post purchased food
     app.post("/purchasedFood", logger, async (req, res) => {
       const food = req.body;
-      console.log(food);
       const result = await purchaseCollection.insertOne(food);
+      const foodId = food.foodId; // Assuming foodId is passed in the purchase request
+      await allFoodItemsCollection.updateOne(
+        { _id: new ObjectId(String(foodId)) },
+        { $inc: { purchaseCount: 1 } }
+      );
       res.send(result);
     });
 
