@@ -11,9 +11,9 @@ const port = process.env.PORT || 5000;
 app.use(
   cors({
     origin: [
-      "https://cheflink-d1e5b.web.app", 
+      "https://cheflink-d1e5b.web.app",
       "cheflink-d1e5b.firebaseapp.com",
-      "http://localhost:5173"
+      "http://localhost:5173",
     ],
     credentials: true,
   })
@@ -64,6 +64,12 @@ const client = new MongoClient(uri, {
   },
 });
 
+// cookie options
+const cookieOptions = {
+  httpOnly: true,
+  secure: true,
+  sameSite: "none",
+};
 async function run() {
   try {
     // Send a ping to confirm a successful connection
@@ -82,13 +88,7 @@ async function run() {
       const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
         expiresIn: "1h",
       });
-      res
-        .cookie("token", token, {
-          httpOnly: true,
-          secure: true,
-          sameSite: "none",
-        })
-        .send({ success: true });
+      res.cookie("token", token, cookieOptions).send({ success: true });
     });
 
     app.post("/logOut", async (req, res) => {
