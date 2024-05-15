@@ -122,12 +122,16 @@ async function run() {
 
     // get all food items
     app.get("/allFoodItems", logger, async (req, res) => {
-      console.log(req.query.email);
+      
+      const page = parseInt(req.query.page);
+      const size = parseInt(req.query.size);
       let query = {};
       if (req.query?.email) {
         query = { email: req.query?.email };
       }
-      const cursor = allFoodItemsCollection.find(query);
+      const cursor = allFoodItemsCollection.find(query)
+      .skip(page*size)
+      .limit(size);
       const result = await cursor.toArray();
       res.send(result);
     });
@@ -170,7 +174,6 @@ async function run() {
 
     // post foods in all food items collection
     app.post("/allFoodItems", logger, async (req, res) => {
-      console.log("pagination query: ", req.query);
       const food = req.body;
       const result = await allFoodItemsCollection.insertOne(food);
       res.send(result);
