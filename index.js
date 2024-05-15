@@ -132,6 +132,11 @@ async function run() {
       res.send(result);
     });
 
+    // get all food count for paginaiton
+    app.get("/allFoodItemsCount", async (req, res) => {
+      const result = await allFoodItemsCollection.estimatedDocumentCount();
+      res.send({ count: result });
+    })
     // get single food by id went to details
     app.get("/allFoodItems/:id", async (req, res) => {
       const id = req.params.id;
@@ -165,6 +170,7 @@ async function run() {
 
     // post foods in all food items collection
     app.post("/allFoodItems", logger, async (req, res) => {
+      console.log("pagination query: ", req.query);
       const food = req.body;
       const result = await allFoodItemsCollection.insertOne(food);
       res.send(result);
