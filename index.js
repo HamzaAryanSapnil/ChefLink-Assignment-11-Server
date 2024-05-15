@@ -67,8 +67,8 @@ const client = new MongoClient(uri, {
 // cookie options
 const cookieOptions = {
   httpOnly: true,
-  secure: true,
-  sameSite: "none",
+  secure: process.env.NODE_ENV === "production" ? true : false,
+  sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
 };
 async function run() {
   try {
@@ -94,7 +94,7 @@ async function run() {
     app.post("/logOut", async (req, res) => {
       const user = req.body;
       console.log("logging out:  ", user);
-      res.clearCookie("token", { maxAge: 0 }).send({ success: true });
+      res.clearCookie("token", { ...cookieOptions,  maxAge: 0 }).send({ success: true });
     });
     // services related api
 
