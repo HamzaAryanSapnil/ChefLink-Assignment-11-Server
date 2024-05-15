@@ -167,7 +167,7 @@ async function run() {
     // get single food's feedback from usersFeedbackCollection
     app.get("/usersFeedback/:foodItemId", async (req, res) => {
       const foodItemId = req.params.foodItemId;
-      const query = { foodItemId: new ObjectId(foodItemId) };
+      const query = { foodItemId: foodItemId };
       const result = await usersFeedbackCollection.find(query).sort({ createdAt: -1 }).toArray();
       res.send(result);
     })
