@@ -164,6 +164,13 @@ async function run() {
       res.send(result);
     });
 
+    // get single food's feedback from usersFeedbackCollection
+    app.get("/usersFeedback/:foodItemId", async (req, res) => {
+      const foodItemId = req.params.foodItemId;
+      const query = { foodItemId: new ObjectId(foodItemId) };
+      const result = await usersFeedbackCollection.find(query).sort({ createdAt: -1 }).toArray();
+      res.send(result);
+    })
     // get all food images from all food items collection
 
     // post users
