@@ -12,8 +12,10 @@ app.use(
   cors({
     origin: [
       "https://cheflink-d1e5b.web.app",
-      "cheflink-d1e5b.firebaseapp.com",
-      "https://assignment-11-server-seven-pi.vercel.app"
+      "http://localhost:5173",
+      "http://localhost:5174",
+      // "cheflink-d1e5b.firebaseapp.com",
+      // "https://assignment-11-server-seven-pi.vercel.app"
     ],
     credentials: true,
   })
@@ -129,12 +131,20 @@ async function run() {
     app.get("/allFoodItems", logger, async (req, res) => {
       const page = parseInt(req.query.page);
       const size = parseInt(req.query.size);
-      let query = {};
+      const min = req.query.min;
+      const max = req.query.max;
+      const filter = req.query;
+      let query = {
+      };
+      const options = {
+        sort: {price: filter.sort === "asc" ? 1 : -1},
+      }
+   
       if (req.query?.email) {
         query = { email: req.query?.email };
       }
       const cursor = allFoodItemsCollection
-        .find(query)
+        .find(query, options)
         .skip(page * size)
         .limit(size);
       const result = await cursor.toArray();
@@ -167,6 +177,8 @@ async function run() {
       const result = await allFoodItemsCollection.findOne(query);
       res.send(result);
     });
+
+    
 
     // get single food's feedback from usersFeedbackCollection
     app.get("/usersFeedback/:foodItemId", async (req, res) => {
@@ -202,12 +214,12 @@ async function run() {
     });
 
     // post purchased food
-    app.post("/purchasedFood", logger, async (req, res) => {
+    app.post("/purchasedFood",  async (req, res) => {
       const food = req.body;
       const result = await purchaseCollection.insertOne(food);
       const foodId = food.foodId; // Assuming foodId is passed in the purchase request
       await allFoodItemsCollection.updateOne(
-        { _id: new ObjectId(String(foodId)) },
+        { _id: new ObjectId(foodId) },
         { $inc: { purchaseCount: 1 } }
       );
       res.send(result);
@@ -278,7 +290,7 @@ async function run() {
 run().catch(console.dir);
 
 app.get("/", (req, res) => {
-  res.send("Assignment 11 server is running");
+  res.send(`Assignment 11 server is running on port ${port}`);
 });
 
 app.listen(port, () =>
