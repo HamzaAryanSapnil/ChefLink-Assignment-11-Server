@@ -180,6 +180,15 @@ async function run() {
 
     
 
+    // get all food's feedback from usersFeedbackCollection
+    app.get("/usersFeedback", async (req, res) => {
+      const result = await usersFeedbackCollection
+        .find()
+        .sort({ createdAt: -1 })
+        .toArray();
+      res.send(result);
+    });
+
     // get single food's feedback from usersFeedbackCollection
     app.get("/usersFeedback/:foodItemId", async (req, res) => {
       const foodItemId = req.params.foodItemId;
@@ -228,6 +237,7 @@ async function run() {
     // update food in all food items collection
     app.put("/allFoodItems/:id", async (req, res) => {
       const id = req.params.id;
+      console.log("updating", id);
       const filter = { _id: new ObjectId(id) };
       const options = { upsert: true };
       const updatedFood = req.body;
@@ -236,8 +246,10 @@ async function run() {
           foodName: updatedFood.foodName,
           foodImageUrl: updatedFood.foodImageUrl,
           foodCategory: updatedFood.foodCategory,
+          quantity: updatedFood.quantity,
           price: updatedFood.price,
           userName: updatedFood.userName,
+          email: updatedFood.email,
           description: updatedFood.description,
           foodOrigin: updatedFood.foodOrigin,
         },
