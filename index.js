@@ -18,6 +18,7 @@ app.use(
       // "https://assignment-11-server-seven-pi.vercel.app"
     ],
     credentials: true,
+    optionsSuccessStatus: 200
   })
 );
 app.use(express.json());
@@ -180,25 +181,27 @@ async function run() {
 
     
 
-    // get all food's feedback from usersFeedbackCollection
+    // get  food's feedback from usersFeedbackCollection
     app.get("/usersFeedback", async (req, res) => {
+      const email = req.query.email;
+      const query = { email: email };
+      
       const result = await usersFeedbackCollection
-        .find()
-        .sort({ createdAt: -1 })
+        .find(query)
         .toArray();
       res.send(result);
     });
 
     // get single food's feedback from usersFeedbackCollection
-    app.get("/usersFeedback/:foodItemId", async (req, res) => {
-      const foodItemId = req.params.foodItemId;
-      const query = { foodItemId: foodItemId };
-      const result = await usersFeedbackCollection
-        .find(query)
-        .sort({ createdAt: -1 })
-        .toArray();
-      res.send(result);
-    });
+    // app.get("/usersFeedback/:foodItemId", async (req, res) => {
+    //   const foodItemId = req.params.foodItemId;
+    //   const query = { foodItemId: foodItemId };
+    //   const result = await usersFeedbackCollection
+    //     .find(query)
+    //     .sort({ createdAt: -1 })
+    //     .toArray();
+    //   res.send(result);
+    // });
     // get all food images from all food items collection
 
     // post users
