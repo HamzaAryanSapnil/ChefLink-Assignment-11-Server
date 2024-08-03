@@ -128,6 +128,16 @@ async function run() {
       res.send(result);
     });
 
+    // for top food section i need to get food items which food items purchaseCount is greater than the others. the food collection is allFoodItems
+    app.get("/topFood", async (req, res) => {
+      const result = await allFoodItemsCollection
+        .find({})
+        .sort({ purchaseCount: -1 })
+        .limit(6)
+        .toArray();
+      res.send(result);
+    });
+
     // get all food items
     app.get("/allFoodItems", logger, async (req, res) => {
       const page = parseInt(req.query.page);
@@ -229,11 +239,27 @@ async function run() {
     app.post("/purchasedFood",  async (req, res) => {
       const food = req.body;
       const result = await purchaseCollection.insertOne(food);
-      const foodId = food.foodId; // Assuming foodId is passed in the purchase request
-      await allFoodItemsCollection.updateOne(
-        { _id: new ObjectId(foodId) },
-        { $inc: { purchaseCount: 1 } }
-      );
+      // const foodId = food.foodId; // Assuming foodId is passed in the purchase request
+      // await allFoodItemsCollection.updateOne(
+      //   { _id: new ObjectId(foodId) },
+      //   { $inc: { purchaseCount: 1 } }
+      // );
+
+      // update purchaseCount: 0 in allFoodItemsCollection. i need to increase it by 1
+      const updatedDoc = {
+        $inc: {
+          purchaseCount: 1,
+         },
+      };
+      const options = { upsert: true };
+      const query = { _id: new ObjectId(food.foodId) };
+      const updatePurchaseCount = await allFoodItemsCollection.updateOne(
+        query,
+        updatedDoc,
+        options
+      )
+      console.log("after purchase... ",updatePurchaseCount);
+      
       res.send(result);
     });
 
