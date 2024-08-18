@@ -15,7 +15,7 @@ app.use(
       "http://localhost:5173",
       "http://localhost:5174",
       // "cheflink-d1e5b.firebaseapp.com",
-      // "https://assignment-11-server-seven-pi.vercel.app"
+      // "http://localhost:5000"
     ],
     credentials: true,
     optionsSuccessStatus: 200
@@ -194,13 +194,18 @@ async function run() {
     // get  food's feedback from usersFeedbackCollection
     app.get("/usersFeedback", async (req, res) => {
       const email = req.query.email;
-      const query = { email: email };
+      let query = {}
+      if (email) {
+        
+         query = { email: email };
+      }
       
       const result = await usersFeedbackCollection
         .find(query)
         .toArray();
       res.send(result);
     });
+
 
     // get single food's feedback from usersFeedbackCollection
     // app.get("/usersFeedback/:foodItemId", async (req, res) => {
